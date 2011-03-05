@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 #
-# iso9075.py - Python codec for ISO9075
+# iso9075.py - Python codec for ISO-9075
 #
 #   Copyright 2011 Jesús Torres <jmtorres@ull.es>
 #

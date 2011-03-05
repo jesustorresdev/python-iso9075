@@ -1,0 +1,57 @@
+iso9075.py - Python codec for ISO-9075.
+Copyright 2011 Jesús Torres <jmtorres@ull.es>
+
+
+Description
+-----------
+
+This is a Python module that provides a codec for ISO-9075 although the standard
+Python codec API. As this codec has been developed mainly for a web front-end
+that speaks with Alfresco although SOAP (and the invalid characters in XML
+NCNames must be ISO-9075 encoded[1]), the default codec registered with name
+'iso9075' will only encode the characters invalid for a XML NCName[2].
+
+However the module provides the function register() to add to the registry
+a new codec (possibly with a different name) that selects the characters to
+encode with a different rule. This is specified although a validation function
+(returns True for valid characters and False for those that must be encoded)
+
+
+Usage
+-----
+
+First we must import the module:
+
+>>> import iso9075
+
+Next we can encode some strings:
+
+>>> "hello:world".encode('iso9075')
+u'hello_x003a_world'
+
+The codec converts the string to unicode internally so if it does not only
+contains ascii characters, it is better to convert the string before.
+
+>>> unicode("hellö:world", 'utf-8').encode('iso9075')
+u'hell\xf6_x003a_world'
+
+or
+
+>>> u"hellö:world".encode('iso9075')
+u'hell\xf6_x003a_world'
+
+For decoding the same rules will apply, including what we said about the
+conversion to unicode:
+
+>>> u'hell\xf6_x003a_world'.decode('iso9075')
+u'hell\xf6:world'
+
+
+References
+----------
+
+[1] http://wiki.alfresco.com/wiki/Search#ISO_9075_encoding
+[2] http://www.w3.org/TR/REC-xml/#NT-Name
+
+
+-- Jesús Torres <jmtorres@ull.es>

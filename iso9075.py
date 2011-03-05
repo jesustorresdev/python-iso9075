@@ -128,21 +128,31 @@ def decode(input, errors = 'strict'):
 
 # Register the codec search function
 
-def find_iso9075(encoding):
-    if encoding == 'iso9075':
-        return codecs.CodecInfo(
-            name='iso9075',
-            encode=Codec().encode,
-            decode=Codec().decode,
-            incrementalencoder=IncrementalEncoder,
-            incrementaldecoder=IncrementalDecoder,
-            streamreader=StreamReader,
-            streamwriter=StreamWriter,
-        )
-    else:
-        return None
+def register(encoding, validate):
+    """Register a ISO-9075 codec.
+    
+    The codec is registered using the name given in encoding. It will use the
+    the function specified in validate to check the characters that must not be
+    encoded.
+    """
+    def find_codec(name):
+        if name == encoding:
+            return codecs.CodecInfo(
+                name=encoding,
+                encode=lambda input, errors='strict':
+                    Codec().encode(input, errors, validate),
+                decode=Codec().decode,
+                incrementalencoder=lambda errors='strict':
+                    IncrementalEncoder(errors, validate),
+                incrementaldecoder=IncrementalDecoder,
+                streamreader=StreamReader,
+                streamwriter=StreamWriter,
+            )
+        else:
+            return None
+    codecs.register(find_codec)
 
-codecs.register(find_iso9075)
+register('iso9075', validateNCNameChar)
 
 
 if __name__ == '__main__':
